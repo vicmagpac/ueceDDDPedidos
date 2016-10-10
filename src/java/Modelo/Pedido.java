@@ -1,7 +1,6 @@
 package Modelo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -25,6 +24,8 @@ import lombok.EqualsAndHashCode;
 @Entity
 @EqualsAndHashCode(of = {"id", "cliente"})
 public class Pedido implements Serializable {
+    
+    private static final int MAXIMO_VENDA_TOTAL = 1000;
 
     @Id
     @GeneratedValue
@@ -35,7 +36,7 @@ public class Pedido implements Serializable {
     private Cliente cliente;
 
     @Column(precision = 8, scale = 2)
-    private BigDecimal valorTotal;
+    private Double valorTotal;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -91,11 +92,13 @@ public class Pedido implements Serializable {
         this.status.cancelar(this);
         return "Pedido cancelado";
     }
-    
-    /*
-    public boolean temLimite() {
-        if (this.cliente == null) {
-            throw new IllegalArgumentException("Informe o cliente do pedido");
+   
+    public boolean valorTotalDoPedidoMenorQueValorTotalPadraoPorPedido() {
+        this.valorTotal = 0d;
+        for (PedidoItem item : this.itens) {
+            this.valorTotal += item.getValor();
         }
-    }*/
+        
+        return this.valorTotal <= MAXIMO_VENDA_TOTAL;
+    }
 }

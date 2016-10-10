@@ -1,7 +1,6 @@
 package Modelo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,7 +30,7 @@ public class PedidoItem  implements Serializable {
 
     @Column(precision = 6, scale = 2)
     @Min(value = 0, message = "Informe o valor")
-    private BigDecimal valor;
+    private Double valor;
 
     public Integer getId() {
         return id;
@@ -69,8 +68,8 @@ public class PedidoItem  implements Serializable {
         return this;
     }
 
-    public BigDecimal getValor() {
-        return this.valor.multiply(new BigDecimal(this.quantidade));
+    public Double getValor() {
+        return this.valor * this.quantidade;
     }
 
     public void remover() {
