@@ -1,5 +1,6 @@
 package Modelo;
 
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,7 +25,7 @@ public class Cliente {
     private String nome;
 
     @NotEmpty(message = "Informe o CNPJ do cliente")
-    @Column(length = 14)
+    @Column(length = 18)
     private String cnpj;
 
     @NotEmpty(message = "Informe a cidade do cliente")
@@ -33,5 +34,50 @@ public class Cliente {
 
     @Min(0)
     @Column(precision = 8, scale = 2)
-    private double limiteDeCredito;
+    private BigDecimal limiteDeCredito;
+
+    public int getId() {
+        return id;
+    }
+
+    public Cliente setId(int id) {
+        this.id = id;
+        return this;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public Cliente setNome(String nome) {
+        this.nome = nome;
+        return this;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public Cliente setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+        return this;
+    }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public Cliente setCidade(String cidade) {
+        this.cidade = cidade;
+        return this;
+    }
+
+    public BigDecimal getLimiteDeCredito() {
+        return limiteDeCredito;
+    }
+
+    public Cliente setLimiteDeCredito(BigDecimal limiteDeCredito) {
+        this.limiteDeCredito = limiteDeCredito;
+        return this;
+    }
 }

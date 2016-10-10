@@ -1,5 +1,6 @@
 package Modelo;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,10 +12,13 @@ import javax.validation.constraints.NotNull;
 
 
 @Entity
-public class PedidoItem {
+public class PedidoItem  implements Serializable {
 
-    @Id
-    @GeneratedValue
+    @Id @GeneratedValue
+    private Integer id;
+    
+    @ManyToOne(optional = false)
+    @NotNull(message = "Informe o pedido")
     private Pedido pedido;
 
     @NotNull(message = "Informe o produto")
@@ -29,10 +33,46 @@ public class PedidoItem {
     @Min(value = 0, message = "Informe o valor")
     private BigDecimal valor;
 
-    public void setPedido(Pedido pedido) {
+    public Integer getId() {
+        return id;
+    }
+
+    public PedidoItem setId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public PedidoItem setPedido(Pedido pedido) {
         this.pedido = pedido;
-    } 
-    
+        return this;
+    }
+
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public PedidoItem setProduto(Produto produto) {
+        this.produto = produto;
+        return this;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public PedidoItem setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
+        return this;
+    }
+
+    public BigDecimal getValor() {
+        return this.valor.multiply(new BigDecimal(this.quantidade));
+    }
+
     public void remover() {
         this.pedido.getItens().remove(this);
     }

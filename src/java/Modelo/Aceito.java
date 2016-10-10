@@ -1,7 +1,5 @@
 package Modelo;
 
-import entities.Repository;
-
 public class Aceito implements IStatus {
 
     @Override
@@ -12,13 +10,13 @@ public class Aceito implements IStatus {
     @Override
     public void pagar(Pedido pedido) {
         pedido.setStatus(Status.Pago);
-        Repository.save(pedido);
+        System.out.println("Pedido PAGO com sucesso");
     }
 
     @Override
     public void cancelar(Pedido pedido) {
         pedido.setStatus(Status.Cancelado);
-        Repository.save(pedido);
+        System.out.println("Pedido CANCELADO com sucesso");
     }
 
 }

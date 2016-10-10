@@ -1,5 +1,6 @@
 package Modelo;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,7 +24,7 @@ import lombok.EqualsAndHashCode;
 
 @Entity
 @EqualsAndHashCode(of = {"id", "cliente"})
-public class Pedido {
+public class Pedido implements Serializable {
 
     @Id
     @GeneratedValue
@@ -51,9 +52,17 @@ public class Pedido {
     public List<PedidoItem> getItens() {
         return itens;
     }
-
+    
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+    
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Status getStatus() {
+        return status;
     }    
     
     public Pedido() {

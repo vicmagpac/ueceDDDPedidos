@@ -2,13 +2,14 @@
 package Modelo;
 
 import entities.Repository;
+import javax.persistence.EntityManager;
 
 public class NovoPedido implements IStatus {
 
     @Override
     public void aceitar(Pedido pedido) {
-        pedido.setStatus(Status.Aceito);
-        Repository.save(pedido);
+        pedido.setStatus(Status.Aceito);        
+        System.out.println("Pedido aceito com sucesso");
     }
 
     @Override
