@@ -1,4 +1,6 @@
-package java.Modelo;
+package Modelo;
+
+import java.math.BigDecimal;
 
 public class Produto {
 
