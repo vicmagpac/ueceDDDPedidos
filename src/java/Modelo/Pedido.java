@@ -1,8 +1,12 @@
 package Modelo;
 
+import entities.annotations.EntityDescriptor;
+import entities.annotations.View;
+import entities.annotations.Views;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -19,18 +24,65 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
+@Data
 @Entity
-@EqualsAndHashCode(of = {"id", "cliente"})
+@EqualsAndHashCode(of = {"id", "numero"})
+@EntityDescriptor(template="@FORM_CRUD")
+@Views({
+    /**
+     * Order soberano estilo
+     */
+    @View(title = "Pedidos",
+         name = "Pedidos",
+         filters="numero;cliente",
+      members = "["
+              + "numero;cliente;data;*numeroDeItens;"
+              + "itens<produto,quantidade,valor,remover()>;"
+              + "*valorTotal;status;"
+              + "[addItem(),aceitar(),pagar(),cancelar()]]",
+      template="@CRUD_PAGE+@FILTER"),
+    /*
+     *
+     */
+  @View(title = "Adicionar pedido",
+         name = "AddOrder",
+      members = "["
+              + "Header[#numero,#data;#cliente:2];"
+              + " Lines[addItem();"
+              + "       itens<[#produto:3;"
+               + "             #quantidade,#valor,#remover()]>;"
+              + "       *valorTotal];"
+              + "aceitar()]",
+   namedQuery = "Select new Modelo.Pedido()"),
+  /**
+   *
+   */
+  @View(title = "Lista de pedidos",
+         name = "ListOfOrders",
+      filters = "cliente;data;valorTotal",
+      members = "numero,cliente,data,quantidade,valorTotal,status",       
+     template = "@FILTER+@PAGER",
+   namedQuery = "from Order order by number")
+})
 public class Pedido implements Serializable {
     
     private static final int MAXIMO_VENDA_TOTAL = 1000;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
 
+    @Length(max = 8)
+    @Column(length = 8, unique = true, nullable = false)
+    @NotEmpty(message = "Informe o numero do pedido")
+    private String numero;
     
     @ManyToOne(optional = false)
     private Cliente cliente;
@@ -43,12 +95,19 @@ public class Pedido implements Serializable {
     private Status status;
     
     @Valid
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
-    private ArrayList<PedidoItem> itens;
+    @OneToMany(mappedBy = "pedido",
+                cascade = CascadeType.ALL,
+          orphanRemoval = true)
+    @Fetch(FetchMode.JOIN)
+    private List<PedidoItem> itens;
+    
+    @Column(precision = 4)
+    @Min(value = 0, message = "Informe quantidade de itens")
+    private Integer numeroDeItens = 0;
 
     @Past
     @Temporal(TemporalType.DATE)
-    private Calendar data;
+    private Date data;
 
     public List<PedidoItem> getItens() {
         return itens;
@@ -68,14 +127,16 @@ public class Pedido implements Serializable {
     
     public Pedido() {
         this.status = Status.NovoPedido;
-        this.data = Calendar.getInstance();
+        this.data = new Date();
         this.itens = new ArrayList<PedidoItem>();
     }
     
     public void addItem() {
+                
         PedidoItem item = new PedidoItem();
         item.setPedido(this);
         this.itens.add(item);
+        this.numeroDeItens++;
     }
     
     public String aceitar() {

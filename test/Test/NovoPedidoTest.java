@@ -35,23 +35,23 @@ public class NovoPedidoTest {
     
     private void montaCenario() {
         Cliente cliente = new Cliente();
-        cliente.setNome("UECE")
-               .setCnpj("49.887.826/0001-03")
-               .setCidade("Fortaleza");
+        cliente.setNome("UECE");
+        cliente.setCnpj("49.887.826/0001-03");
+        cliente.setCidade("Fortaleza");
         
         
         Produto produto = new Produto();
-        produto.setNome("Livro")
-               .setPreco(new BigDecimal("50.0"));
+        produto.setNome("Livro");
+        produto.setPreco(50.0);
         
         
         this.pedido = new Pedido();
         this.pedido.setCliente(cliente);
                 
         PedidoItem item = new PedidoItem();
-        item.setProduto(produto)
-            .setQuantidade(2)
-            .setPedido(this.pedido);   
+        item.setProduto(produto);
+        item.setQuantidade(2);
+        item.setPedido(this.pedido);   
     }
     
 }

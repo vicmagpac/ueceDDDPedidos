@@ -1,24 +1,38 @@
 package Modelo;
 
+import entities.annotations.View;
+import entities.annotations.Views;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
+import lombok.Data;
 import org.hibernate.validator.constraints.NotEmpty;
 
-
-
+@Data
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"id"})})
-public class Cliente {
+@Views(
+  @View(name = "Clientes",
+       title = "Clientes",
+     filters = "nome",
+     members = "[numero;nome;cnpj;cidade;limiteDeCredito;]",
+    template = "@CRUD_PAGE+@FILTER"))
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"numero"})})
+public class Cliente implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private int id;
+    
+    @Column(length = 8)
+    @NotEmpty(message = "Informe o numero do cliente")
+    private String numero;
     
     @NotEmpty(message = "Informe o nome do cliente")
     @Column(length = 40, nullable = false)
@@ -34,50 +48,50 @@ public class Cliente {
 
     @Min(0)
     @Column(precision = 8, scale = 2)
-    private BigDecimal limiteDeCredito;
+    private Double limiteDeCredito;
 
     public int getId() {
         return id;
     }
 
-    public Cliente setId(int id) {
+    public void setId(int id) {
         this.id = id;
-        return this;
     }
 
     public String getNome() {
         return nome;
     }
 
-    public Cliente setNome(String nome) {
+    public void setNome(String nome) {
         this.nome = nome;
-        return this;
     }
 
     public String getCnpj() {
         return cnpj;
     }
 
-    public Cliente setCnpj(String cnpj) {
+    public void setCnpj(String cnpj) {
         this.cnpj = cnpj;
-        return this;
     }
 
     public String getCidade() {
         return cidade;
     }
 
-    public Cliente setCidade(String cidade) {
+    public void setCidade(String cidade) {
         this.cidade = cidade;
-        return this;
     }
 
-    public BigDecimal getLimiteDeCredito() {
+    public Double getLimiteDeCredito() {
         return limiteDeCredito;
     }
 
-    public Cliente setLimiteDeCredito(BigDecimal limiteDeCredito) {
+    public void setLimiteDeCredito(Double limiteDeCredito) {
         this.limiteDeCredito = limiteDeCredito;
-        return this;
+    }
+    
+     @Override
+    public String toString() {
+        return this.numero + " - " + this.nome; 
     }
 }

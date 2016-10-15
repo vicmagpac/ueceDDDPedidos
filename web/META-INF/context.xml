@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context antiJARLocking="true" path="/ueceDDDPedidos">
   <!-- Java db -->
-  <Resource auth="Container" description="JavaDB for Entities Blank" driverClassName="org.apache.derby.jdbc.ClientDriver" maxActive="20" maxIdle="10" maxWait="-1" name="jdbc/ds-blank" password="blank" type="javax.sql.DataSource" url="jdbc:derby://localhost:1527/blank;create=true" username="blank"/>
-  <!-- Postgres
-    <Resource auth="Container"
-    driverClassName="org.postgresql.Driver"
-    maxActive="20"
-    maxIdle="10"
-    maxWait="-1"
-    name="jdbc/datasource"
-    password="postgres"
-    type="javax.sql.DataSource"
-    url="jdbc:postgresql://localhost:5432/postgres"
-    username="postgres"/>-->
+  <!--<Resource auth="Container" description="JavaDB for Entities Blank" driverClassName="org.apache.derby.jdbc.ClientDriver" maxActive="20" maxIdle="10" maxWait="-1" name="jdbc/ds-blank" password="blank" type="javax.sql.DataSource" url="jdbc:derby://localhost:1527/blank;create=true" username="blank"/>
+-->  
+
+    <Resource name="jdbc/pedidos"
+          global="jdbc/pedidos"
+          auth="Container"
+          type="javax.sql.DataSource"
+          driverClassName="com.mysql.jdbc.Driver"
+          url="jdbc:mysql://10.0.0.55:3306/pedidos?zeroDateTimeBehavior=convertToNull"
+          username="root"
+          password="victor81854778"
+          maxActive="10"
+          maxIdle="10"
+          minIdle="5"
+          maxWait="10000"/>
 </Context>
