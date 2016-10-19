@@ -46,6 +46,7 @@ public class NovoPedidoTest {
         
         
         this.pedido = new Pedido();
+        this.pedido.setNumero("666");
         this.pedido.setCliente(cliente);
                 
         PedidoItem item = new PedidoItem();

@@ -28,6 +28,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Formula;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -36,9 +37,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 @EqualsAndHashCode(of = {"id", "numero"})
 @EntityDescriptor(template="@FORM_CRUD")
 @Views({
-    /**
-     * Order soberano estilo
-     */
     @View(title = "Pedidos",
          name = "Pedidos",
          filters="numero;cliente",
@@ -49,27 +47,16 @@ import org.hibernate.validator.constraints.NotEmpty;
               + "[addItem(),aceitar(),pagar(),cancelar()]]",
       template="@CRUD_PAGE+@FILTER"),
     /*
-     *
-     */
   @View(title = "Adicionar pedido",
          name = "AddOrder",
       members = "["
-              + "Header[#numero,#data;#cliente:2];"
-              + " Lines[addItem();"
+              + "Pedido[#numero,#data;#cliente:2];"
+              + " Itens[addItem();"
               + "       itens<[#produto:3;"
                + "             #quantidade,#valor,#remover()]>;"
               + "       *valorTotal];"
               + "aceitar()]",
-   namedQuery = "Select new Modelo.Pedido()"),
-  /**
-   *
-   */
-  @View(title = "Lista de pedidos",
-         name = "ListOfOrders",
-      filters = "cliente;data;valorTotal",
-      members = "numero,cliente,data,quantidade,valorTotal,status",       
-     template = "@FILTER+@PAGER",
-   namedQuery = "from Order order by number")
+   namedQuery = "Select new Modelo.Pedido()")*/
 })
 public class Pedido implements Serializable {
     
@@ -87,6 +74,8 @@ public class Pedido implements Serializable {
     @ManyToOne(optional = false)
     private Cliente cliente;
 
+    @Formula("(select sum(pi.quantidade*pi.valor)"
+           + "  from PedidoItem pi where pi.pedido_id = id)")
     @Column(precision = 8, scale = 2)
     private Double valorTotal;
 
@@ -157,7 +146,7 @@ public class Pedido implements Serializable {
     public boolean valorTotalDoPedidoMenorQueValorTotalPadraoPorPedido() {
         this.valorTotal = 0d;
         for (PedidoItem item : this.itens) {
-            this.valorTotal += item.getValor();
+            this.valorTotal += item.getValorTotal();
         }
         
         return this.valorTotal <= MAXIMO_VENDA_TOTAL;

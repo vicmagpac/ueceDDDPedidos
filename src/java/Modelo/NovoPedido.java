@@ -8,7 +8,13 @@ public class NovoPedido implements IStatus {
 
     @Override
     public void aceitar(Pedido pedido) {
-        pedido.setStatus(Status.Aceito);        
+        
+        if (!pedido.valorTotalDoPedidoMenorQueValorTotalPadraoPorPedido()){
+            throw new IllegalStateException("Valor total do pedido maior que 1000.");
+        }
+        
+        pedido.setStatus(Status.Aceito); 
+        Repository.save(pedido);
         System.out.println("Pedido aceito com sucesso");
     }
 
@@ -19,7 +25,9 @@ public class NovoPedido implements IStatus {
 
     @Override
     public void cancelar(Pedido pedido) {
-        throw new IllegalStateException("Não é possivel cancelar, pedido ainda não ACEITO");
+        pedido.setStatus(Status.Cancelado);
+        Repository.save(pedido);
+        System.out.println("Pedido CANCELADO com sucesso");
     }
     
 }

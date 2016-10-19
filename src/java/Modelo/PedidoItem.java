@@ -69,6 +69,10 @@ public class PedidoItem  implements Serializable {
     public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
     }
+    
+    public void setValorTotal(Double valorTotal) {
+        this.valorTotal = valorTotal;
+    }
 
     public Double getValorTotal() {
         return this.valor * this.quantidade;
