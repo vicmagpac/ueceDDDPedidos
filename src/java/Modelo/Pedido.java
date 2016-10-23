@@ -4,6 +4,7 @@ import entities.annotations.EntityDescriptor;
 import entities.annotations.View;
 import entities.annotations.Views;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -45,18 +47,14 @@ import org.hibernate.validator.constraints.NotEmpty;
               + "itens<produto,quantidade,valor,remover()>;"
               + "*valorTotal;status;"
               + "[addItem(),aceitar(),pagar(),cancelar()]]",
-      template="@CRUD_PAGE+@FILTER"),
-    /*
-  @View(title = "Adicionar pedido",
-         name = "AddOrder",
-      members = "["
-              + "Pedido[#numero,#data;#cliente:2];"
-              + " Itens[addItem();"
-              + "       itens<[#produto:3;"
-               + "             #quantidade,#valor,#remover()]>;"
-              + "       *valorTotal];"
-              + "aceitar()]",
-   namedQuery = "Select new Modelo.Pedido()")*/
+      template="@CRUD_PAGE+@FILTER"),    
+
+  @View(title = "Lista de pedidos",
+         name = "ListaDePedidos",
+      filters = "cliente;data",
+      members = "numero,cliente,data,numeroDeItens,valorTotal,status",       
+     template = "@FILTER+@PAGER",
+   namedQuery = "from Pedido order by numero")
 })
 public class Pedido implements Serializable {
     
@@ -97,6 +95,9 @@ public class Pedido implements Serializable {
     @Past
     @Temporal(TemporalType.DATE)
     private Date data;
+    
+    @Version
+    private Timestamp version;
 
     public List<PedidoItem> getItens() {
         return itens;
@@ -150,5 +151,13 @@ public class Pedido implements Serializable {
         }
         
         return this.valorTotal <= MAXIMO_VENDA_TOTAL;
+    }
+    
+    protected boolean verificaCreditoDoCliente() {
+        if (this.cliente == null) {
+            throw new IllegalArgumentException("Informe o cliente");
+        }
+        double creditoAtual = CreditoTotalService.getCreditoAtual(this.cliente);
+        return creditoAtual + this.valorTotal <= this.cliente.getLimiteDeCredito();
     }
 }

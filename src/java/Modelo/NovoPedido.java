@@ -13,6 +13,10 @@ public class NovoPedido implements IStatus {
             throw new IllegalStateException("Valor total do pedido maior que 1000.");
         }
         
+        if (!pedido.verificaCreditoDoCliente()) {
+            throw new IllegalStateException("Limite de credito excedido."); 
+        }
+        
         pedido.setStatus(Status.Aceito); 
         Repository.save(pedido);
         System.out.println("Pedido aceito com sucesso");
