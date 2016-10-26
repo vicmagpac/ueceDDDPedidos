@@ -19,6 +19,7 @@ public class Aceito implements IStatus {
     @Override
     public void cancelar(Pedido pedido) {
         pedido.setStatus(Status.Cancelado);
+        Repository.save(pedido);
         System.out.println("Pedido CANCELADO com sucesso");
     }
 

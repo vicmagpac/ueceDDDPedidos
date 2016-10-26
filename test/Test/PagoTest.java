@@ -25,12 +25,10 @@ public class PagoTest {
         this.pedido.pagar();
     }
     
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testCancelar() {
         this.montaCenario();
         this.pedido.cancelar();
-        
-        Assert.assertEquals(Status.Cancelado, this.pedido.getStatus());
     }   
     
     private void montaCenario() {
@@ -48,6 +46,7 @@ public class PagoTest {
         this.pedido = new Pedido();
         this.pedido.setCliente(cliente);
         this.pedido.setStatus(Status.Pago);
+        this.pedido.setNumero("123");
                 
         PedidoItem item = new PedidoItem();
         item.setProduto(produto);

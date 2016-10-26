@@ -9,7 +9,7 @@
           auth="Container"
           type="javax.sql.DataSource"
           driverClassName="com.mysql.jdbc.Driver"
-          url="jdbc:mysql://10.0.0.55:3306/pedidos?zeroDateTimeBehavior=convertToNull"
+          url="jdbc:mysql://10.0.0.2:3306/pedidos?zeroDateTimeBehavior=convertToNull"
           username="root"
           password="victor81854778"
           maxActive="10"

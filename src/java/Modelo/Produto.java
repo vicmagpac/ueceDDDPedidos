@@ -46,6 +46,6 @@ public class Produto implements Serializable {
     
      @Override
     public String toString() {
-        return this.nome + " - R$ " + this.preco; 
+        return this.nome; 
     }
 }

@@ -28,15 +28,14 @@ public class PedidoItem  implements Serializable {
 
     @Min(value = 1, message = "Informe a quantidade")
     @Column(precision = 4)
-    private int quantidade;
+    private Integer quantidade;
     
     @Column(precision = 6, scale = 2)
     @Min(value = 0, message = "Informe o valor")
-    private double valor;
+    private Double valor;
     
-    @Transient
     @Column(precision = 8, scale = 2)
-    private double valorTotal;
+    private Double valorTotal;
 
     public Integer getId() {
         return id;
@@ -62,11 +61,11 @@ public class PedidoItem  implements Serializable {
         this.produto = produto;
     }
 
-    public int getQuantidade() {
+    public Integer getQuantidade() {
         return quantidade;
     }
 
-    public void setQuantidade(int quantidade) {
+    public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
     }
     
@@ -78,6 +77,11 @@ public class PedidoItem  implements Serializable {
         return this.valor * this.quantidade;
     }
 
+    public void setValor(double valor) {
+        this.valor = valor;
+    }
+
+    
     public void remover() {
         this.pedido.getItens().remove(this);
     }

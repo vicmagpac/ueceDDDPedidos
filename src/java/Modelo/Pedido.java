@@ -1,6 +1,8 @@
 package Modelo;
 
+import entities.annotations.ActionDescriptor;
 import entities.annotations.EntityDescriptor;
+import entities.annotations.ParameterDescriptor;
 import entities.annotations.View;
 import entities.annotations.Views;
 import java.io.Serializable;
@@ -39,22 +41,29 @@ import org.hibernate.validator.constraints.NotEmpty;
 @EqualsAndHashCode(of = {"id", "numero"})
 @EntityDescriptor(template="@FORM_CRUD")
 @Views({
-    @View(title = "Pedidos",
+    @View(title = "Registrar Pedido",
          name = "Pedidos",
-         filters="numero;cliente",
+         namedQuery = "Select new Modelo.Pedido()",
       members = "["
-              + "numero;cliente;data;*numeroDeItens;"
-              + "itens<produto,quantidade,valor,remover()>;"
-              + "*valorTotal;status;"
-              + "[addItem(),aceitar(),pagar(),cancelar()]]",
-      template="@CRUD_PAGE+@FILTER"),    
+              + "#numero;#cliente;*data;*numeroDeItens;"
+              + "itens<*produto,*quantidade,*valor,remover()>;"
+              + "*valorTotal;"
+              + "[addItem(),aceitar()]]"
+      ),    
 
   @View(title = "Lista de pedidos",
          name = "ListaDePedidos",
       filters = "cliente;data",
       members = "numero,cliente,data,numeroDeItens,valorTotal,status",       
      template = "@FILTER+@PAGER",
-   namedQuery = "from Pedido order by numero")
+   namedQuery = "from Pedido order by numero"),
+        
+  @View(title = "Caixa",
+         name = "Caixa",
+         filters="numero,cliente",
+      members = "cliente,valorTotal,pagar(),cancelar()",       
+     template = "@FILTER+@PAGER",
+   namedQuery = "from Pedido where status = 'Aceito' order by numero")
 })
 public class Pedido implements Serializable {
     
@@ -114,6 +123,10 @@ public class Pedido implements Serializable {
     public Status getStatus() {
         return status;
     }    
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
     
     public Pedido() {
         this.status = Status.NovoPedido;
@@ -121,24 +134,31 @@ public class Pedido implements Serializable {
         this.itens = new ArrayList<PedidoItem>();
     }
     
-    public void addItem() {
-                
+    public void addItem(@ParameterDescriptor(displayName = "Produto") Produto produto, @ParameterDescriptor(displayName = "Quantidade") Integer quantidade) {
+        
         PedidoItem item = new PedidoItem();
         item.setPedido(this);
+        item.setProduto(produto);
+        item.setQuantidade(quantidade);
+        item.setValorTotal(quantidade * produto.getPreco());
+        item.setValor(produto.getPreco());
         this.itens.add(item);
         this.numeroDeItens++;
     }
     
+    @ActionDescriptor(refreshView = true)
     public String aceitar() {
         this.status.aceitar(this);
         return "Pedido aceito";
     }
 
+    @ActionDescriptor(refreshView = true)
     public String pagar() {
         this.status.pagar(this);
         return "Pedido pago";
     }
 
+    @ActionDescriptor(refreshView = true)
     public String cancelar() {        
         this.status.cancelar(this);
         return "Pedido cancelado";

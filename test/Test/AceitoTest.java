@@ -47,6 +47,7 @@ public class AceitoTest {
         produto.setPreco(50.0);
         
         this.pedido = new Pedido();
+        this.pedido.setNumero("123");
         this.pedido.setCliente(cliente);
         this.pedido.setStatus(Status.Aceito);
                 

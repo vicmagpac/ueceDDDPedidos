@@ -46,6 +46,7 @@ public class CanceladoTest {
         this.pedido = new Pedido();
         this.pedido.setCliente(cliente);
         this.pedido.setStatus(Status.Cancelado);
+        this.pedido.setNumero("123");
                 
         PedidoItem item = new PedidoItem();
         item.setProduto(produto);
